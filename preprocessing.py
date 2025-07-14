@@ -10,7 +10,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 # Baca file CSV
-df = pd.read_csv('enhypen.csv')
+df = pd.read_csv('enhypen_en.csv')
 
 # Ubah nama kolom ke huruf kecil agar aman
 df.columns = df.columns.str.lower()
