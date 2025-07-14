@@ -9,13 +9,13 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 # Baca file CSV
-df = pd.read_csv('enhypen_id.csv')
+df = pd.read_csv('enhypen_en.csv')
 
 # Ubah nama kolom ke lowercase
 df.columns = df.columns.str.lower()
 
 # Set stopwords bahasa Inggris
-stop_words = set(stopwords.words('indonesian'))
+stop_words = set(stopwords.words('english'))
 
 # Fungsi preprocessing untuk teks Inggris
 def preprocess(text):
@@ -59,6 +59,6 @@ df['clean_text'] = df['full_text'].apply(preprocess)
 
 # Pilih hanya kolom yang ingin disimpan
 output_columns = ['full_text', 'clean_text']
-df[output_columns].to_csv('data_bersih.csv', index=False)
+df[output_columns].to_csv('data_clean.csv', index=False)
 
 print("\n✅ Preprocessing selesai. File disimpan sebagai 'data_cleaned.csv'")
