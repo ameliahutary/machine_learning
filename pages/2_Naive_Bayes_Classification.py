@@ -1,74 +1,92 @@
-# pages/2_Classification_Naive_Bayes.py
 import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix
 from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
-st.title("📊 Klasifikasi Sentimen - Naive Bayes")
+st.set_page_config(page_title="Naive Bayes Classification", layout="wide")
+st.title("📊 Naive Bayes Classification & Sentiment Evaluation")
 
-uploaded_file = st.file_uploader("📤 Upload file hasil preprocessing (wajib kolom 'clean_text' dan 'label')", type=["csv"])
+uploaded_file = st.file_uploader("📤 Upload file hasil preprocessing dan labelling (CSV)", type=["csv"])
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    df.columns = df.columns.str.lower()
+    required_cols = {'clean_text', 'label'}
 
-    if 'clean_text' not in df.columns or 'label' not in df.columns:
-        st.error("❌ Kolom 'clean_text' dan 'label' harus ada.")
+    if not required_cols.issubset(df.columns):
+        st.error("⚠️ File harus memiliki kolom 'clean_text' dan 'label'.")
     else:
+        st.write("📄 Preview Data:")
+        st.dataframe(df[['clean_text', 'label']].head())
+
         # Split data
         X = df['clean_text']
         y = df['label']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # TF-IDF Vectorizer
+        # TF-IDF
         vectorizer = TfidfVectorizer()
-        X_train_vec = vectorizer.fit_transform(X_train)
-        X_test_vec = vectorizer.transform(X_test)
+        X_train_tfidf = vectorizer.fit_transform(X_train)
+        X_test_tfidf = vectorizer.transform(X_test)
 
-        # Train model
+        # Naive Bayes model
         model = MultinomialNB()
-        model.fit(X_train_vec, y_train)
+        model.fit(X_train_tfidf, y_train)
+        y_pred = model.predict(X_test_tfidf)
 
-        # Predict
-        y_pred = model.predict(X_test_vec)
+        # Evaluasi
+        st.subheader("📈 Classification Report:")
+        report = classification_report(y_test, y_pred, output_dict=True)
+        st.dataframe(pd.DataFrame(report).transpose())
 
-        # Evaluation
-        accuracy = accuracy_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred, average='macro')
-        recall = recall_score(y_test, y_pred, average='macro')
-        cm = confusion_matrix(y_test, y_pred, labels=['positive', 'neutral', 'negative'])
+        st.subheader("🧾 Confusion Matrix:")
+        cm = confusion_matrix(y_test, y_pred, labels=["positive", "neutral", "negative"])
+        cm_df = pd.DataFrame(cm, columns=["Predicted Pos", "Predicted Neu", "Predicted Neg"],
+                                index=["Actual Pos", "Actual Neu", "Actual Neg"])
+        st.dataframe(cm_df)
 
-        st.subheader("📈 Hasil Evaluasi:")
-        st.write(f"✅ **Accuracy:** {accuracy:.2f}")
-        st.write(f"✅ **Precision:** {precision:.2f}")
-        st.write(f"✅ **Recall:** {recall:.2f}")
+        # Simpan hasil prediksi
+        df_test = pd.DataFrame(X_test)
+        df_test['actual_label'] = y_test.values
+        df_test['predicted_label'] = y_pred
+        st.subheader("🔍 Contoh Hasil Prediksi:")
+        st.dataframe(df_test.head())
 
-        st.subheader("🧩 Confusion Matrix:")
-        fig, ax = plt.subplots()
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['positive', 'neutral', 'negative'], yticklabels=['positive', 'neutral', 'negative'], ax=ax)
-        st.pyplot(fig)
+        # Download hasil prediksi
+        st.download_button(
+            label="⬇️ Download hasil prediksi",
+            data=df_test.to_csv(index=False).encode('utf-8'),
+            file_name="naive_bayes_predictions.csv",
+            mime="text/csv"
+        )
 
-        st.subheader("🔍 Contoh Prediksi:")
-        hasil_df = pd.DataFrame({'clean_text': X_test, 'label_asli': y_test, 'label_prediksi': y_pred})
-        st.dataframe(hasil_df.head())
+        # WordCloud positif dan negatif
+        st.subheader("☁️ WordCloud per Sentimen")
 
-st.subheader("🌐 WordCloud berdasarkan Sentimen")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("**Positive Words**")
+            pos_text = ' '.join(df[df['label'] == 'positive']['clean_text'])
+            if pos_text:
+                wordcloud_pos = WordCloud(width=400, height=300, background_color='white').generate(pos_text)
+                fig1, ax1 = plt.subplots()
+                ax1.imshow(wordcloud_pos, interpolation='bilinear')
+                ax1.axis('off')
+                st.pyplot(fig1)
+            else:
+                st.write("Tidak ada data sentimen positif.")
 
-# Gabungkan semua teks per label
-for label in ['positive', 'neutral', 'negative']:
-    st.markdown(f"#### {label.capitalize()}")
-
-    text_kategori = ' '.join(df[df['label'] == label]['clean_text'].dropna())
-    if text_kategori.strip():
-        wc = WordCloud(width=800, height=400, background_color='white', colormap='viridis').generate(text_kategori)
-        fig, ax = plt.subplots()
-        ax.imshow(wc, interpolation='bilinear')
-        ax.axis("off")
-        st.pyplot(fig)
-    else:
-        st.warning(f"Tidak ada data untuk kategori '{label}'")
+        with col2:
+            st.markdown("**Negative Words**")
+            neg_text = ' '.join(df[df['label'] == 'negative']['clean_text'])
+            if neg_text:
+                wordcloud_neg = WordCloud(width=400, height=300, background_color='white').generate(neg_text)
+                fig2, ax2 = plt.subplots()
+                ax2.imshow(wordcloud_neg, interpolation='bilinear')
+                ax2.axis('off')
+                st.pyplot(fig2)
+            else:
+                st.write("Tidak ada data sentimen negatif.")
