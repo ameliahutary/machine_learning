@@ -1,65 +1,64 @@
 import pandas as pd
 import re
-from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import nltk
 
-# Download resource NLTK (hanya perlu sekali)
+# Download resource NLTK (hanya perlu dijalankan sekali)
 nltk.download('punkt')
 nltk.download('stopwords')
 
 # Baca file CSV
-df = pd.read_csv('enhypen_en.csv')
+df = pd.read_csv('enhypen_id.csv')
 
-# Ubah nama kolom ke huruf kecil agar aman
+# Ubah nama kolom ke lowercase
 df.columns = df.columns.str.lower()
 
-# Inisialisasi stemmer dan stopwords
-factory = StemmerFactory()
-stemmer = factory.create_stemmer()
+# Set stopwords bahasa Inggris
 stop_words = set(stopwords.words('indonesian'))
 
-# Fungsi preprocessing lengkap
+# Fungsi preprocessing untuk teks Inggris
 def preprocess(text):
     if pd.isnull(text):
         return ''
     
-    # 1. Hapus URL
+    # 1. Remove URLs
     text = re.sub(r'http\S+', '', text)
 
-    # 2. Hapus mention (@username)
+    # 2. Remove mentions (@username)
     text = re.sub(r'@\w+', '', text)
 
-    # 3. Hapus simbol #, tapi simpan katanya
+    # 3. Remove hashtags symbol '#' but keep the word
     text = re.sub(r'#', '', text)
 
-    # 4. Hapus angka dan karakter non-huruf
+    # 4. Remove numbers and non-letter characters
     text = re.sub(r'[^a-zA-Z\s]', '', text)
 
-    # 5. Hapus spasi berlebih
+    # 5. Remove extra spaces
     text = re.sub(r'\s+', ' ', text).strip()
 
-    # 6. Ubah ke huruf kecil
+    # 6. Lowercase
     text = text.lower()
 
     # 7. Tokenizing
     tokens = word_tokenize(text)
 
-    # 8. Filtering (hapus stopwords)
+    # 8. Remove stopwords
     filtered = [word for word in tokens if word not in stop_words]
 
-    # 9. Stemming
-    stemmed = [stemmer.stem(word) for word in filtered]
+    # 9. Remove duplicate words (optional)
+    unique_words = []
+    for word in filtered:
+        if word not in unique_words:
+            unique_words.append(word)
 
-    return ' '.join(stemmed)
+    return ' '.join(unique_words)
 
 # Terapkan preprocessing ke kolom 'full_text'
-df['teks_bersih'] = df['full_text'].apply(preprocess)
+df['clean_text'] = df['full_text'].apply(preprocess)
 
-# Tampilkan 5 hasil pertama
-print(df[['full_text', 'teks_bersih']].head())
+# Pilih hanya kolom yang ingin disimpan
+output_columns = ['full_text', 'clean_text']
+df[output_columns].to_csv('data_id.csv', index=False, sep=';')
 
-# Simpan ke file baru
-df.to_csv('data_preprocessed.csv', index=False)
-print("\n✅ Data berhasil diproses dan disimpan sebagai 'data_preprocessed.csv'")
+print("\n✅ Preprocessing selesai. File disimpan sebagai 'data_cleaned.csv'")
