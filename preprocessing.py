@@ -1,64 +1,34 @@
+import streamlit as st
 import pandas as pd
 import re
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
-# Download resource NLTK (hanya perlu dijalankan sekali)
-nltk.download('punkt')
 nltk.download('stopwords')
-
-# Baca file CSV
-df = pd.read_csv('enhypen_en.csv')
-
-# Ubah nama kolom ke lowercase
-df.columns = df.columns.str.lower()
-
-# Set stopwords bahasa Inggris
+nltk.download('punkt')
 stop_words = set(stopwords.words('english'))
 
-# Fungsi preprocessing untuk teks Inggris
 def preprocess(text):
-    if pd.isnull(text):
-        return ''
-    
-    # 1. Remove URLs
-    text = re.sub(r'http\S+', '', text)
-
-    # 2. Remove mentions (@username)
-    text = re.sub(r'@\w+', '', text)
-
-    # 3. Remove hashtags symbol '#' but keep the word
-    text = re.sub(r'#', '', text)
-
-    # 4. Remove numbers and non-letter characters
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-
-    # 5. Remove extra spaces
-    text = re.sub(r'\s+', ' ', text).strip()
-
-    # 6. Lowercase
-    text = text.lower()
-
-    # 7. Tokenizing
+    if pd.isnull(text): return ''
+    text = re.sub(r"http\S+|@\w+|#|[^a-zA-Z\s]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip().lower()
     tokens = word_tokenize(text)
+    tokens = [w for w in tokens if w not in stop_words]
+    return ' '.join(dict.fromkeys(tokens))
 
-    # 8. Remove stopwords
-    filtered = [word for word in tokens if word not in stop_words]
+st.title("🧹 Preprocessing Teks")
 
-    # 9. Remove duplicate words (optional)
-    unique_words = []
-    for word in filtered:
-        if word not in unique_words:
-            unique_words.append(word)
+uploaded_file = st.file_uploader("Upload CSV (dengan kolom: full_text)", type="csv")
 
-    return ' '.join(unique_words)
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    df.columns = df.columns.str.lower()
 
-# Terapkan preprocessing ke kolom 'full_text'
-df['clean_text'] = df['full_text'].apply(preprocess)
-
-# Pilih hanya kolom yang ingin disimpan
-output_columns = ['full_text', 'clean_text']
-df[output_columns].to_csv('data_clean.csv', index=False)
-
-print("\n✅ Preprocessing selesai. File disimpan sebagai 'data_cleaned.csv'")
+    if 'full_text' not in df.columns:
+        st.error("File harus memiliki kolom 'full_text'")
+    else:
+        df['clean_text'] = df['full_text'].apply(preprocess)
+        st.dataframe(df[['full_text', 'clean_text']])
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button("⬇️ Download Cleaned CSV", csv, "cleaned_text.csv", "text/csv")
