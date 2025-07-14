@@ -59,6 +59,6 @@ df['clean_text'] = df['full_text'].apply(preprocess)
 
 # Pilih hanya kolom yang ingin disimpan
 output_columns = ['full_text', 'clean_text']
-df[output_columns].to_csv('data_id.csv', index=False, sep=';')
+df[output_columns].to_csv('data_bersih.csv', index=False)
 
 print("\n✅ Preprocessing selesai. File disimpan sebagai 'data_cleaned.csv'")
