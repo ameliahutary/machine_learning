@@ -33,7 +33,7 @@ if uploaded_file is not None:
                 return ''
             text = re.sub(r"http\S+", "", text)           # Hapus URL
             text = re.sub(r"@\w+", "", text)              # Hapus mention
-            text = re.sub(r"#", "", text)                 # Hapus hashtag symbol
+            text = re.sub(r'#.*', '', text)               # Hapus hashtag symbol
             text = re.sub(r"[^a-zA-Z\s]", "", text)       # Hapus karakter non-huruf
             text = re.sub(r"\s+", " ", text).strip()      # Hapus spasi berlebih
             text = text.lower()                           # Lowercase
