@@ -7,4 +7,4 @@ wordcloud
 matplotlib
 seaborn
 deep-translator
-
+snscrape
