@@ -6,4 +6,5 @@ scikit-learn
 wordcloud
 matplotlib
 seaborn
+deep-translator
 
