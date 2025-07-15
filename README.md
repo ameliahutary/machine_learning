@@ -119,7 +119,7 @@ Hasil crawling dan analisis akan menghasilkan dataset dengan kolom:
 
 ## 👤 Author
 
-Dibuat oleh Ameliah Utary
+Dibuat oleh Ameliah Utary  
 📧 Email: ameliyyh12@email.com  
 🔗 GitHub: [@ameliahutary](https://github.com/ameliahutary)
 
