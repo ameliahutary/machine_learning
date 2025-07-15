@@ -7,6 +7,8 @@
 [![commit](https://img.shields.io/github/commit-activity/m/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/commits/main)
 [![last-commit](https://img.shields.io/github/last-commit/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/commits/main)
 
+🌐 **Live App**: [machinelearning-ameliah.streamlit.app](https://machinelearning-ameliah.streamlit.app/)
+
 ---
 
 Proyek ini merupakan aplikasi berbasis **Streamlit** yang dirancang untuk menganalisis teks dari media sosial **Twitter (X)**. Aplikasi ini memiliki fitur mulai dari **pengambilan data (crawling)**, **penerjemahan**, **preprocessing**, hingga **klasifikasi sentimen**.
