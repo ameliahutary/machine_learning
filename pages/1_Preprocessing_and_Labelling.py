@@ -3,14 +3,15 @@ import pandas as pd
 import re
 from nltk.corpus import stopwords
 from textblob import TextBlob
+from deep_translator import GoogleTranslator
 import nltk
 
-# Download NLTK stopwords (sekali saja)
+# Unduh stopwords jika belum ada
 nltk.download('stopwords')
 
 # Konfigurasi halaman
-st.set_page_config(page_title="Preprocessing & Sentiment Labelling", layout="wide")
-st.title("🧹 Preprocessing & Sentiment Labelling")
+st.set_page_config(page_title="Translasi, Preprocessing & Sentiment Labelling", layout="wide")
+st.title("🌐 Translasi ➜ Preprocessing ➜ Sentiment Labelling")
 
 # Upload file
 uploaded_file = st.file_uploader("📤 Upload file CSV (wajib ada kolom 'full_text')", type=["csv"])
@@ -24,28 +25,39 @@ if uploaded_file is not None:
         st.write("📄 Preview Data Asli:")
         st.dataframe(df[['full_text']].head())
 
-        # Inisialisasi stopwords
+        with st.spinner("🔄 Menerjemahkan teks ke Bahasa Inggris..."):
+            def translate_text(text):
+                try:
+                    return GoogleTranslator(source='auto', target='en').translate(text)
+                except:
+                    return text  # jika gagal, pakai teks aslinya
+
+            df['translated'] = df['full_text'].apply(translate_text)
+
+        st.write("🌍 Hasil Translasi:")
+        st.dataframe(df[['full_text', 'translated']].head())
+
+        # Inisialisasi stopwords Bahasa Inggris
         stop_words = set(stopwords.words('english'))
 
         # Fungsi preprocessing
         def preprocess(text):
             if pd.isnull(text):
                 return ''
-            text = re.sub(r"http\S+", "", text)           # Hapus URL
-            text = re.sub(r"@\w+", "", text)              # Hapus mention
-            text = re.sub(r"#", "", text)                 # Hapus hashtag symbol
-            text = re.sub(r"[^a-zA-Z\s]", "", text)       # Hapus karakter non-huruf
-            text = re.sub(r"\s+", " ", text).strip()      # Hapus spasi berlebih
-            text = text.lower()                           # Lowercase
-            tokens = text.split()                         # Tokenisasi
+            text = re.sub(r"http\S+", "", text)
+            text = re.sub(r"@\w+", "", text)
+            text = re.sub(r"#", "", text)
+            text = re.sub(r"[^a-zA-Z\s]", "", text)
+            text = re.sub(r"\s+", " ", text).strip()
+            text = text.lower()
+            tokens = text.split()
             filtered = [word for word in tokens if word not in stop_words]
-            unique_words = list(dict.fromkeys(filtered))  # Hapus duplikat
+            unique_words = list(dict.fromkeys(filtered))
             return ' '.join(unique_words)
 
-        # Proses teks
-        df['clean_text'] = df['full_text'].apply(preprocess)
+        df['clean_text'] = df['translated'].apply(preprocess)
 
-        # Fungsi untuk pelabelan sentimen
+        # Fungsi pelabelan sentimen
         def get_sentiment(text):
             if not text.strip():
                 return 'neutral'
@@ -57,17 +69,15 @@ if uploaded_file is not None:
             else:
                 return 'neutral'
 
-        # Terapkan pelabelan
         df['label'] = df['clean_text'].apply(get_sentiment)
 
-        # Tampilkan hasil
-        st.success("✅ Preprocessing dan pelabelan selesai!")
-        st.dataframe(df[['full_text', 'clean_text', 'label']].head())
+        st.success("✅ Translasi, preprocessing, dan pelabelan selesai!")
+        st.dataframe(df[['full_text', 'translated', 'clean_text', 'label']].head())
 
         # Tombol download
         st.download_button(
             label="⬇️ Download hasil sebagai CSV",
-            data=df[['full_text', 'clean_text', 'label']].to_csv(index=False).encode('utf-8'),
-            file_name="preprocessed_labeled_data.csv",
+            data=df[['full_text', 'translated', 'clean_text', 'label']].to_csv(index=False).encode('utf-8'),
+            file_name="translated_preprocessed_labeled.csv",
             mime="text/csv"
         )
