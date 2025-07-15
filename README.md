@@ -57,7 +57,7 @@ Setelah data berhasil diambil dalam bentuk `.csv`, aplikasi ini menyediakan sera
 
 ### 1. Clone repositori ini:
 ```bash
-git clone https://github.com/yourusername/twitter-text-analysis.git
+git clone https://github.com/ameliahutary/machine_learning.git
 cd twitter-text-analysis
 ```
 
@@ -112,8 +112,8 @@ Hasil crawling dan analisis akan menghasilkan dataset dengan kolom:
 ## 👤 Author
 
 Dibuat oleh [Nama Kamu]  
-📧 Email: your@email.com  
-🔗 GitHub: [@yourusername](https://github.com/yourusername)
+📧 Email: ameliyyh12@email.com  
+🔗 GitHub: [@ameliahutary](https://github.com/ameliahutary)
 
 ---
 
