@@ -1,6 +1,14 @@
 
 # 🧠 Twitter Text Analysis (Crawling, Translate, Preprocessing & Classification)
 
+[![issues](https://img.shields.io/github/issues/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/issues)
+[![language](https://img.shields.io/github/languages/count/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/search)
+[![top-language](https://img.shields.io/github/languages/top/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/search)
+[![commit](https://img.shields.io/github/commit-activity/m/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/commits/main)
+[![last-commit](https://img.shields.io/github/last-commit/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/commits/main)
+
+---
+
 Proyek ini merupakan aplikasi berbasis **Streamlit** yang dirancang untuk menganalisis teks dari media sosial **Twitter (X)**. Aplikasi ini memiliki fitur mulai dari **pengambilan data (crawling)**, **penerjemahan**, **preprocessing**, hingga **klasifikasi sentimen**.
 
 ---
