@@ -1,6 +1,5 @@
 
 # 🧠 Twitter Text Analysis (Crawling, Translate, Preprocessing & Classification)
----
 
 [![issues](https://img.shields.io/github/issues/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/issues)
 [![language](https://img.shields.io/github/languages/count/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/search)
@@ -41,11 +40,11 @@ Setelah data berhasil diambil dalam bentuk `.csv`, aplikasi ini menyediakan sera
 ├── requirements.txt                       # Dependency Python
 ├── procfile                               # File untuk deployment (Heroku)
 ├── README.md                              # Dokumentasi proyek ini
+├── Crawl_data_twitter.ipynb               # Notebook untuk scraping tweet via Tweet Harvest
 ├── pages/
 │   ├── 1_Translate.py                     # Modul translasi otomatis
-│   ├── 2_Preprocessing_and_Labelling.py  # Modul preprocessing + labelling sentimen
-│   ├── 3_Naive_Bayes_Classification.py   # Modul klasifikasi Naive Bayes
-│   └── Crawl_data_twitter.ipynb          # Notebook untuk scraping tweet via Tweet Harvest
+│   ├── 2_Preprocessing_and_Labelling.py   # Modul preprocessing + labelling sentimen
+│   ├── 3_Naive_Bayes_Classification.py    # Modul klasifikasi Naive Bayes
 ```
 
 ---
