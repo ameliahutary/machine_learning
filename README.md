@@ -1,5 +1,6 @@
 
 # 🧠 Twitter Text Analysis (Crawling, Translate, Preprocessing & Classification)
+---
 
 [![issues](https://img.shields.io/github/issues/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/issues)
 [![language](https://img.shields.io/github/languages/count/ameliahutary/machine_learning)](https://github.com/ameliahutary/machine_learning/search)
