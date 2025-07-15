@@ -44,7 +44,7 @@ Setelah data berhasil diambil dalam bentuk `.csv`, aplikasi ini menyediakan sera
 ├── pages/
 │   ├── 1_Translate.py                     # Modul translasi otomatis
 │   ├── 2_Preprocessing_and_Labelling.py   # Modul preprocessing + labelling sentimen
-│   ├── 3_Naive_Bayes_Classification.py    # Modul klasifikasi Naive Bayes
+│   └── 3_Naive_Bayes_Classification.py    # Modul klasifikasi Naive Bayes
 ```
 
 ---
