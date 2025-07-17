@@ -29,6 +29,10 @@ if uploaded_file:
 
         # TF-IDF
         vectorizer = TfidfVectorizer()
+        # Hapus data kosong atau NaN
+        X_train = X_train.dropna()
+        y_train = y_train.loc[X_train.index]
+
         X_train_tfidf = vectorizer.fit_transform(X_train)
         X_test_tfidf = vectorizer.transform(X_test)
 
